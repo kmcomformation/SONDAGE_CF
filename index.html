@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Enquête de satisfaction — COMFORMATION</title>
+<style>
+  :root {
+    --navy: #0b2a4a;
+    --navy-2: #123b66;
+    --green: #1f9d55;
+    --green-d: #167a42;
+    --ink: #17212b;
+    --muted: #5b6b7b;
+    --line: #d5dee8;
+    --bg: #eef3f8;
+    --card: #ffffff;
+    --err: #b42318;
+    --err-bg: #fdecea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #e8eef5;
+      --muted: #9fb0c1;
+      --line: #2c4560;
+      --bg: #071a2e;
+      --card: #0e2742;
+      --err: #ffb4a8;
+      --err-bg: #3a1a17;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 20px 56px;
+    border-bottom: 6px solid var(--green);
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .brand { font-weight: 700; letter-spacing: .04em; font-size: .95rem; color: #9fe0bb; }
+  h1 { margin: 6px 0 0; font-size: clamp(1.4rem, 5vw, 1.9rem); line-height: 1.2; }
+  main { max-width: 720px; margin: -36px auto 40px; padding: 0 14px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .intro { border-left: 5px solid var(--green); }
+  .intro p { margin: 0; }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend, label.q {
+    display: block;
+    font-weight: 650;
+    margin-bottom: 10px;
+    padding: 0;
+    color: var(--ink);
+  }
+  .qn { color: var(--green); margin-right: 4px; }
+  .choices { display: grid; gap: 10px; }
+  .choice {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; min-height: 52px;
+    border: 2px solid var(--line); border-radius: 10px;
+    cursor: pointer;
+  }
+  .choice:has(input:checked) { border-color: var(--green); background: color-mix(in srgb, var(--green) 10%, transparent); }
+  .choice:has(input:focus-visible) { outline: 3px solid var(--navy-2); outline-offset: 2px; }
+  .choice input { width: 20px; height: 20px; accent-color: var(--green); flex: none; }
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 12px;
+    font: inherit; color: inherit;
+    background: transparent;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    resize: vertical;
+  }
+  textarea:focus { outline: none; border-color: var(--navy-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy-2) 25%, transparent); }
+  .count { text-align: right; font-size: .8rem; color: var(--muted); margin-top: 4px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  button {
+    width: 100%; min-height: 54px;
+    font: inherit; font-weight: 700; font-size: 1.05rem;
+    color: #fff; background: var(--green);
+    border: 0; border-radius: 10px; cursor: pointer;
+  }
+  button:hover { background: var(--green-d); }
+  button:focus-visible { outline: 3px solid var(--navy-2); outline-offset: 3px; }
+  button:disabled { opacity: .65; cursor: progress; }
+  .msg { display: none; padding: 12px 14px; border-radius: 10px; margin-bottom: 12px; font-weight: 600; }
+  .msg.show { display: block; }
+  .msg.err { background: var(--err-bg); color: var(--err); }
+  .note { font-size: .85rem; color: var(--muted); text-align: center; margin: 12px 0 0; }
+  .thanks { text-align: center; padding: 36px 20px; display: none; }
+  .thanks.show { display: block; }
+  .check {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--green); color: #fff;
+    display: grid; place-items: center; margin: 0 auto 14px;
+    font-size: 2rem; font-weight: 700;
+  }
+  .thanks h2 { margin: 0 0 8px; color: var(--navy); }
+  @media (prefers-color-scheme: dark) { .thanks h2 { color: #fff; } }
+  .thanks .sig { font-weight: 700; color: var(--green); }
+  @media (prefers-reduced-motion: no-preference) {
+    .thanks.show .check { animation: pop .35s ease-out; }
+    @keyframes pop { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">COMFORMATION</div>
+    <h1>ENQUÊTE DE SATISFACTION — COMFORMATION</h1>
+  </div>
+</header>
+
+<main>
+  <div id="formView">
+    <div class="card intro">
+      <p><strong>Votre avis compte !</strong> Ce questionnaire est entièrement anonyme et vise à améliorer la qualité de nos formations. Exprimez-vous librement et sincèrement. Toutes les réponses sont facultatives.</p>
+    </div>
+
+    <form id="survey" novalidate autocomplete="off">
+      <div class="card">
+        <fieldset>
+          <legend>Formation suivie</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="formation" value="Informatique bureautique"> <span>Informatique bureautique</span></label>
+            <label class="choice"><input type="radio" name="formation" value="Excel professionnel appliqué aux entreprises"> <span>Excel professionnel appliqué aux entreprises</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="card">
+        <label class="q" for="q1"><span class="qn">1.</span> Comment évaluez-vous globalement la qualité de la formation que vous avez suivie chez COMFORMATION ?</label>
+        <textarea id="q1" name="q1" maxlength="2000"></textarea>
+        <div class="count" data-for="q1">0 / 2000</div>
+      </div>
+
+      <div class="card">
+        <label class="q" for="q2"><span class="qn">2.</span> Quels sont les points forts que vous avez particulièrement appréciés pendant votre formation ?</label>
+        <textarea id="q2" name="q2" maxlength="2000"></textarea>
+        <div class="count" data-for="q2">0 / 2000</div>
+      </div>
+
+      <div class="card">
+        <label class="q" for="q3"><span class="qn">3.</span> Quelles difficultés ou insuffisances avez-vous constatées concernant les explications des formateurs, les exercices pratiques, les horaires ou l'organisation des cours ?</label>
+        <textarea id="q3" name="q3" maxlength="2000"></textarea>
+        <div class="count" data-for="q3">0 / 2000</div>
+      </div>
+
+      <div class="card">
+        <label class="q" for="q4"><span class="qn">4.</span> Selon vous, quelles sont les principales raisons qui poussent certains apprenants à abandonner leur formation avant la fin ?</label>
+        <textarea id="q4" name="q4" maxlength="2000"></textarea>
+        <div class="count" data-for="q4">0 / 2000</div>
+      </div>
+
+      <div class="card">
+        <label class="q" for="q5"><span class="qn">5.</span> Quelles améliorations ou recommandations proposeriez-vous à COMFORMATION pour mieux accompagner les apprenants et réduire les abandons ?</label>
+        <textarea id="q5" name="q5" maxlength="2000"></textarea>
+        <div class="count" data-for="q5">0 / 2000</div>
+      </div>
+
+      <!-- Piège anti-robots : doit rester vide -->
+      <div class="hp" aria-hidden="true">
+        <label>Ne pas remplir <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <div id="msg" class="msg err" role="alert" aria-live="assertive"></div>
+      <button type="submit" id="btn">Envoyer mes réponses</button>
+      <p class="note">Aucun nom, téléphone, e-mail, cookie ni adresse IP n'est collecté.</p>
+    </form>
+  </div>
+
+  <div id="thanksView" class="card thanks" role="status" aria-live="polite">
+    <div class="check" aria-hidden="true">✓</div>
+    <h2>Merci pour votre participation !</h2>
+    <p>Votre avis nous aidera à améliorer nos formations.</p>
+    <p class="sig">— COMFORMATION</p>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ====== À MODIFIER : URL du déploiement Google Apps Script (se termine par /exec) ======
+  var ENDPOINT = "https://script.google.com/macros/s/AKfycbwGhbGUwhj283UzXdc11wwz4FHsQTwOUXe99BKfZXev9zCLVZsDWvr2oP0ZqbLb8Wgg/exec";
+  // =========================================================================================
+
+  var TIMEOUT_MS = 20000;
+  var form = document.getElementById("survey");
+  var btn = document.getElementById("btn");
+  var msg = document.getElementById("msg");
+  var formView = document.getElementById("formView");
+  var thanksView = document.getElementById("thanksView");
+  var sending = false;
+
+  // ID unique généré une fois par remplissage : le serveur ignore les doublons
+  var submissionId = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : "id-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+
+  // Compteurs de caractères
+  Array.prototype.forEach.call(document.querySelectorAll("textarea"), function (ta) {
+    var out = document.querySelector('.count[data-for="' + ta.id + '"]');
+    ta.addEventListener("input", function () {
+      out.textContent = ta.value.length + " / " + ta.maxLength;
+    });
+  });
+
+  function showError(text) {
+    msg.textContent = text;
+    msg.classList.add("show");
+  }
+  function clearError() {
+    msg.textContent = "";
+    msg.classList.remove("show");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (sending) return; // anti double envoi
+    clearError();
+
+    var checked = form.querySelector('input[name="formation"]:checked');
+    var data = {
+      id: submissionId,
+      formation: checked ? checked.value : "",
+      q1: form.q1.value.trim(),
+      q2: form.q2.value.trim(),
+      q3: form.q3.value.trim(),
+      q4: form.q4.value.trim(),
+      q5: form.q5.value.trim(),
+      website: form.website.value // honeypot
+    };
+
+    var hasContent = data.formation || data.q1 || data.q2 || data.q3 || data.q4 || data.q5;
+    if (!hasContent) {
+      showError("Le formulaire est vide. Répondez à au moins une question (même une seule) avant d'envoyer.");
+      return;
+    }
+
+    if (ENDPOINT.indexOf("https://script.google.com/") !== 0) {
+      showError("Le formulaire n'est pas encore connecté à Google Sheets (URL du déploiement manquante dans le fichier).");
+      return;
+    }
+
+    sending = true;
+    btn.disabled = true;
+    btn.textContent = "Envoi en cours…";
+
+    var ctrl = ("AbortController" in window) ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, TIMEOUT_MS);
+
+    fetch(ENDPOINT, {
+      method: "POST",
+      // text/plain évite la requête préliminaire CORS (plus rapide, compatible Apps Script)
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(data),
+      redirect: "follow",
+      credentials: "omit",
+      referrerPolicy: "no-referrer",
+      cache: "no-store",
+      signal: ctrl ? ctrl.signal : undefined
+    })
+    .then(function (res) {
+      if (!res.ok) throw new Error("http");
+      return res.json();
+    })
+    .then(function (json) {
+      clearTimeout(timer);
+      if (json && json.ok === true) {
+        // Confirmation affichée UNIQUEMENT après validation réelle par le serveur
+        formView.style.display = "none";
+        thanksView.classList.add("show");
+        window.scrollTo({ top: 0 });
+      } else {
+        throw new Error((json && json.error) || "server");
+      }
+    })
+    .catch(function (err) {
+      clearTimeout(timer);
+      sending = false;
+      btn.disabled = false;
+      btn.textContent = "Envoyer mes réponses";
+      var text = "Vos réponses n'ont pas pu être enregistrées. Vérifiez votre connexion puis appuyez de nouveau sur « Envoyer mes réponses ». Votre texte est conservé.";
+      if (err && err.message === "too_busy") text = "Le serveur est occupé. Réessayez dans quelques secondes. Votre texte est conservé.";
+      showError(text);
+    });
+  });
+})();
+</script>
+</body>
+</html>
